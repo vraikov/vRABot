@@ -11,7 +11,7 @@ namespace vRABot.Conversations
 {
     [LuisModel("11c48ce9-00db-442c-b3ac-d38b9f82ce46", "9334becbdb9e411d8320908164c830f8")]
     [Serializable]
-    public class CatalogModel : LuisDialog<object>
+    public class CatalogDialog : LuisDialog<object>
     {
         const string SERVER_ENTITY = "vra.server";
         private string currentServer;
