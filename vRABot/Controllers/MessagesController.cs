@@ -25,7 +25,7 @@ namespace vRABot
                 int length = (message.Text ?? string.Empty).Length;
 
                 // return our reply to the user
-                return message.CreateReplyMessage($"You sent {length} characters");
+                return message.CreateReplyMessage($"You sent {length} characters !");
             }
             else
             {
