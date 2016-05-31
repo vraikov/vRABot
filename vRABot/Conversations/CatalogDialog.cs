@@ -14,7 +14,9 @@ namespace vRABot.Conversations
     public class CatalogDialog : LuisDialog<object>
     {
         const string SERVER_ENTITY = "vra.server";
+
         private string currentServer;
+        private string addingServer;
 
         [LuisIntent("")]
         public async Task Default(IDialogContext context, LuisResult result)
@@ -29,8 +31,9 @@ namespace vRABot.Conversations
             EntityRecommendation server;
             if (result.TryFindEntity(SERVER_ENTITY, out server))
             {
-                context.UserData.SetValue<string>("addingServer", server.Entity);
-                PromptDialog.Confirm(context, UseServerConfirmed, $"Are you sure you want to add {server.Entity} ?");
+                this.addingServer = server.Entity.Replace(" ", "");
+                PromptDialog.Confirm(context, UseServerConfirmed, $"Are you sure you want to connect to \'{this.addingServer}\'?", promptStyle: PromptStyle.None);
+
             }
             else
             {
@@ -41,13 +44,15 @@ namespace vRABot.Conversations
 
         public async Task UseServerConfirmed(IDialogContext context, IAwaitable<bool> confirmation)
         {
-            if (await confirmation && context.UserData.TryGetValue<string>("addingServer", out this.currentServer))
+            if (await confirmation && !string.IsNullOrWhiteSpace(this.addingServer))
             {
-                await context.PostAsync($"Ok will use server {this.currentServer}.");
+                this.currentServer = this.addingServer;
+                this.addingServer = null;
+                await context.PostAsync($"Using server \'{this.currentServer}\'.");
             }
             else
             {
-                await context.PostAsync("Ok! We haven't modified your alarms!");
+                await context.PostAsync($"Still using server \'{this.currentServer ?? "N/A"}\'.");
             }
 
             context.Wait(MessageReceived);
