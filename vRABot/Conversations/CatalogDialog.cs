@@ -44,7 +44,7 @@ namespace vRABot.Conversations
             }
             else
             {
-                await context.PostAsync("Please specify server.");
+                await context.PostAsync("Please specify vRA host.");
                 context.Wait(MessageReceived);
             }
         }
@@ -61,13 +61,13 @@ namespace vRABot.Conversations
                 }
                 else
                 {
-                    var itemsFormatted = string.Join(" ", catItemsNames.Select(item => $"*{item}*\n\n"));
-                    await context.PostAsync($"Here you are (bow):\n\n{itemsFormatted}");
+                    var itemsFormatted = string.Join("\n\n", catItemsNames.Select(item => $"*{item}*"));
+                    await context.PostAsync($"Here you are:\n\n{itemsFormatted}");
                 }
             }
             else
             {
-                await context.PostAsync("No server configured.");
+                await context.PostAsync("You need to specify the vRA host prior accessing the catalog! Which host would you like to use?");
             }
 
             context.Wait(MessageReceived);
@@ -84,7 +84,7 @@ namespace vRABot.Conversations
             }
             catch (OperationCanceledException)
             {
-                await context.PostAsync("Canceled...");
+                await context.PostAsync("Operation was canceled...");
                 return;
             }
 
@@ -94,7 +94,7 @@ namespace vRABot.Conversations
             }
             else
             {
-                await context.PostAsync("Failed to configure server!");
+                await context.PostAsync("Failed to register vRA server!");
             }
 
             context.Wait(MessageReceived);
@@ -128,7 +128,7 @@ namespace vRABot.Conversations
                 }
                 else
                 {
-                    await context.PostAsync("I didn't get what is your request from the catalog.");
+                    await context.PostAsync("I didn't get what item you want from the catalog.");
                     context.Wait(MessageReceived);
                 }
             }
