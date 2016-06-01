@@ -113,6 +113,7 @@ namespace vRABot.Conversations
                 EntityRecommendation item;
                 if (result.TryFindEntity(CATALOG_ITEM_ENTITY, out item))
                 {
+                    /*
                     int requests = 1;
                     EntityRecommendation itemsToRequest;
                     if (result.TryFindEntity(NUMBER, out itemsToRequest))
@@ -122,7 +123,7 @@ namespace vRABot.Conversations
                             requests = 1;
                         }
                     }
-
+                    */
                     for (int i = 0; i < requests; i++)
                     {
                         this.requestId = await this.currentServer.RequestCatalogItem(item.Entity);
