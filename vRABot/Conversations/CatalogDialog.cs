@@ -1,5 +1,6 @@
 ﻿using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.FormFlow;
+using Microsoft.Bot.Builder.FormFlow.Advanced;
 using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
 using System;
@@ -16,6 +17,8 @@ namespace vRABot.Conversations
     public class CatalogDialog : LuisDialog<object>
     {
         const string SERVER_ENTITY = "vra.server";
+        const string CATALOG_ITEM_ENTITY = "vra.catalog.item";
+        const string NUMBER = "builtin.number";
 
         private vRAServer currentServer;
 
@@ -32,8 +35,8 @@ namespace vRABot.Conversations
             EntityRecommendation server;
             if (result.TryFindEntity(SERVER_ENTITY, out server))
             {
-                var serverForm = new FormDialog<ServerInfo>(new ServerInfo(server.Entity.Replace(" ", "")), options: FormOptions.PromptInStart);
-                context.Call<ServerInfo>(serverForm, ServerFormComplete);
+                var serverForm = new FormDialog<ServerInfoForm>(new ServerInfoForm(server.Entity.Replace(" ", "")), options: FormOptions.PromptInStart);
+                context.Call<ServerInfoForm>(serverForm, ServerFormComplete);
             }
             else
             {
@@ -48,8 +51,8 @@ namespace vRABot.Conversations
             if (this.currentServer != null)
             {
                 var catItemsNames = await this.currentServer.GetCatalogItemNames();
-                var message = "Choose an item: " + string.Join(Environment.NewLine, catItemsNames);
-                await context.PostAsync(message);
+                var itemsFormatted = string.Join(" ", catItemsNames.Select((item, i) => $"{i + 1}. {item}"));
+                await context.PostAsync($"# H3 Choose an item: {itemsFormatted}");
             }
             else
             {
@@ -59,7 +62,7 @@ namespace vRABot.Conversations
             context.Wait(MessageReceived);
         }
 
-        private async Task ServerFormComplete(IDialogContext context, IAwaitable<ServerInfo> result)
+        private async Task ServerFormComplete(IDialogContext context, IAwaitable<ServerInfoForm> result)
         {
             this.currentServer = null;
             try
@@ -80,6 +83,40 @@ namespace vRABot.Conversations
             else
             {
                 await context.PostAsync("Failed to configure server!");
+            }
+
+            context.Wait(MessageReceived);
+        }
+
+        [LuisIntent("vra.request.catalog.item")]
+        public async Task RequestCatalogItem(IDialogContext context, LuisResult result)
+        {
+            if (this.currentServer == null)
+            {
+                await context.PostAsync("No server configured.");
+            }
+            else
+            {
+                EntityRecommendation item;
+                if (result.TryFindEntity(CATALOG_ITEM_ENTITY, out item))
+                {
+                    int requests = 1;
+                    EntityRecommendation itemsToRequest;
+                    if (result.TryFindEntity(NUMBER, out itemsToRequest))
+                    {
+                        //TODO: parse number
+                    }
+
+                    for (int i = 0; i < requests; i++)
+                    {
+                        var requestId = await this.currentServer.RequestCatalogItem(item.Entity);
+                        await context.PostAsync($"Requested item with id = {requestId}");
+                    }
+                }
+                else
+                {
+                    await context.PostAsync("Please specify item to request.");
+                }
             }
 
             context.Wait(MessageReceived);

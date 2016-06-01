@@ -29,6 +29,11 @@ namespace vRABot.vRA
             return await GetServerResult<IEnumerable<string>>(() => APIClientHelper.GetCatalogItems(this.server, this.token)).ConfigureAwait(false);
         }
 
+        public async Task<string> RequestCatalogItem(string item)
+        {
+            return await GetServerResult<string>(() => APIClientHelper.RequestCatalogItem(this.server, this.token, item));
+        }
+
         private async Task<T> GetServerResult<T>(Func<Task<T>> action)
         {
             try
@@ -43,7 +48,7 @@ namespace vRABot.vRA
             catch (TokenExpiredException)
             {
                 this.token = await APIClientHelper.GetBearerToken(this.server, this.username, this.password, this.tenant).ConfigureAwait(false);
-                return await GetServerResult<T>(action).ConfigureAwait(false);
+                return await action().ConfigureAwait(false);
             }
         }
     }

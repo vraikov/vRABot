@@ -7,7 +7,7 @@ using System.Web;
 namespace vRABot.Conversations
 {
     [Serializable]
-    public class ServerInfo
+    public class ServerInfoForm
     {
         [Optional]
         public string hostname;
@@ -18,14 +18,14 @@ namespace vRABot.Conversations
 
         public string tenant;
 
-        public ServerInfo(string server)
+        public ServerInfoForm(string server)
         {
             this.hostname = server;
         }
 
-        public static IForm<ServerInfo> BuildForm()
+        public static IForm<ServerInfoForm> BuildForm()
         {
-            return new FormBuilder<ServerInfo>()
+            return new FormBuilder<ServerInfoForm>()
                     .Message("Enter login information")
                     .Build();
         }
