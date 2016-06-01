@@ -1,4 +1,5 @@
 ﻿using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.FormFlow;
 using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using vRABot.vRA;
 
 namespace vRABot.Conversations
 {
@@ -15,8 +17,7 @@ namespace vRABot.Conversations
     {
         const string SERVER_ENTITY = "vra.server";
 
-        private string currentServer;
-        private string addingServer;
+        private vRAServer currentServer;
 
         [LuisIntent("")]
         public async Task Default(IDialogContext context, LuisResult result)
@@ -31,9 +32,8 @@ namespace vRABot.Conversations
             EntityRecommendation server;
             if (result.TryFindEntity(SERVER_ENTITY, out server))
             {
-                this.addingServer = server.Entity.Replace(" ", "");
-                PromptDialog.Confirm(context, UseServerConfirmed, $"Are you sure you want to connect to \'{this.addingServer}\'?", promptStyle: PromptStyle.None);
-
+                var serverForm = new FormDialog<ServerInfo>(new ServerInfo(server.Entity.Replace(" ", "")), options: FormOptions.PromptInStart);
+                context.Call<ServerInfo>(serverForm, ServerFormComplete);
             }
             else
             {
@@ -42,17 +42,44 @@ namespace vRABot.Conversations
             }
         }
 
-        public async Task UseServerConfirmed(IDialogContext context, IAwaitable<bool> confirmation)
+        [LuisIntent("vra.list.catalog")]
+        public async Task ListCatalogItems(IDialogContext context, LuisResult result)
         {
-            if (await confirmation && !string.IsNullOrWhiteSpace(this.addingServer))
+            if (this.currentServer != null)
             {
-                this.currentServer = this.addingServer;
-                this.addingServer = null;
-                await context.PostAsync($"Using server \'{this.currentServer}\'.");
+                var catItemsNames = await this.currentServer.GetCatalogItemNames();
+                var message = "Choose an item: " + string.Join(Environment.NewLine, catItemsNames);
+                await context.PostAsync(message);
             }
             else
             {
-                await context.PostAsync($"Still using server \'{this.currentServer ?? "N/A"}\'.");
+                await context.PostAsync("No server configured.");
+            }
+
+            context.Wait(MessageReceived);
+        }
+
+        private async Task ServerFormComplete(IDialogContext context, IAwaitable<ServerInfo> result)
+        {
+            this.currentServer = null;
+            try
+            {
+                var serverInfo = await result;
+                this.currentServer = new vRAServer(serverInfo.hostname, serverInfo.username, serverInfo.password, serverInfo.tenant);
+            }
+            catch (OperationCanceledException)
+            {
+                await context.PostAsync("Canceled...");
+                return;
+            }
+
+            if (this.currentServer != null)
+            {
+                await context.PostAsync("Server is configured, awaiting comands");
+            }
+            else
+            {
+                await context.PostAsync("Failed to configure server!");
             }
 
             context.Wait(MessageReceived);
