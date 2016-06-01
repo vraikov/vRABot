@@ -44,11 +44,11 @@ namespace vRABot.vRA
             {
                 if (messageResponse.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    throw new Exception("Unathorized!");
+                    throw new APIClientUnathorizedException();
                 }
                 else
                 {
-                    throw new Exception($"Your request is {messageResponse.StatusCode.ToString()}");
+                    throw new APIClientException($"Your request is {messageResponse.StatusCode.ToString()}");
                 }
             }
         }
@@ -74,9 +74,9 @@ namespace vRABot.vRA
                         return Task.FromResult<string>(id.Value);
                     });
                 }
-                catch (Exception exc)
+                catch (Exception ex)
                 {
-                    throw new Exception("Something went terribly wrong!", exc);
+                    throw new APIClientException("Something went terribly wrong!", ex);
                 }
             }
         }
@@ -97,9 +97,9 @@ namespace vRABot.vRA
                         return Task.FromResult<IEnumerable<string>>(catalogItemNames);
                     });
                 }
-                catch (Exception exc)
+                catch (Exception ex)
                 {
-                    throw new Exception("Something went terribly wrong!", exc);
+                    throw new APIClientException("Something went terribly wrong!", ex);
                 }
             }
         }
@@ -145,12 +145,35 @@ namespace vRABot.vRA
                             }
                         }
 
-                        throw new Exception($"The catalog item {catalogItem} is no longer available for request!");
+                        throw new APIClientException($"The catalog item {catalogItem} is no longer available for request!");
                     });
                 }
-                catch (Exception exc)
+                catch (Exception ex)
                 {
-                    throw new Exception("Something went terribly wrong!", exc);
+                    throw new APIClientException("Something went terribly wrong!", ex);
+                }
+            }
+        }
+
+        public async static Task<string> GetRequestState(string server, string bearerToken, string requestId)
+        {
+            using (var client = APIClientHelper.GetInsecureHttpClientWithToken(bearerToken))
+            {
+                try
+                {
+                    HttpResponseMessage messageResponse = await client.GetAsync(
+                        $"https://{server}/catalog-service/api/consumer/requests/{requestId}");
+
+                    return await HandleResultStatusCode<string>(messageResponse, (response) =>
+                    {
+                        var xml = XDocument.Parse(response);
+                        var state = xml.Root.Attribute("state").Value;
+                        return Task.FromResult<string>(state);
+                    });
+                }
+                catch (Exception ex)
+                {
+                    throw new APIClientException("Something went terribly wrong!", ex);
                 }
             }
         }

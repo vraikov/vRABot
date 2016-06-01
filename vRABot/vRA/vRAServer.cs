@@ -45,7 +45,7 @@ namespace vRABot.vRA
 
                 return await action().ConfigureAwait(false);
             }
-            catch (TokenExpiredException)
+            catch (APIClientUnathorizedException)
             {
                 this.token = await APIClientHelper.GetBearerToken(this.server, this.username, this.password, this.tenant).ConfigureAwait(false);
                 return await action().ConfigureAwait(false);

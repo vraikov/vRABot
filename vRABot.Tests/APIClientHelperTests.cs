@@ -46,10 +46,23 @@ namespace vRABot.Tests
 
             // Act
             var token = await APIClientHelper.GetBearerToken(server, user, password, tenant);
-            var result = await APIClientHelper.RequestCatalogItem(server, token, "test-docker-amazon");
+            var result = await APIClientHelper.RequestCatalogItem(server, token, "busybox");
 
             // Assert
             Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public async Task When_Requested_Should_Return_Request_State()
+        {
+            // Arrange
+            var requestId = "a667dd84-4c31-407d-a0b7-551c86e78b89";
+            // Act
+            var token = await APIClientHelper.GetBearerToken(server, user, password, tenant);
+            var result = await APIClientHelper.GetRequestState(server, token, requestId);
+
+            // Assert
+            Assert.AreEqual<string>(result, "SUCCESSFUL");
         }
     }
 }

@@ -118,7 +118,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="vRA\TokenExpiredException.cs" />
+    <Compile Include="vRA\APIClientException.cs" />
+    <Compile Include="vRA\APIClientUnathorizedException.cs" />
     <Compile Include="vRA\vRAServer.cs" />
   </ItemGroup>
   <ItemGroup>
