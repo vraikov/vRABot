@@ -1,0 +1,598 @@
+{
+  "luis_schema_version": "1.2.0",
+  "name": "vra.luis.model",
+  "desc": "Automate provisioning using vRA",
+  "culture": "en-us",
+  "intents": [
+    {
+      "Name": "vra.request.catalog.item",
+      "Children": []
+    },
+    {
+      "Name": "vra.list.catalog",
+      "Children": []
+    },
+    {
+      "Name": "vra.use.server",
+      "Children": []
+    },
+    {
+      "Name": "None",
+      "Children": []
+    }
+  ],
+  "entities": [
+    {
+      "Name": "vra.resource.item",
+      "Children": []
+    },
+    {
+      "Name": "vra.resource.item.operation",
+      "Children": []
+    },
+    {
+      "Name": "vra.server",
+      "Children": []
+    },
+    {
+      "Name": "vra.catalog.item",
+      "Children": []
+    }
+  ],
+  "bing_entities": [
+    "number"
+  ],
+  "actions": [
+    {
+      "actionName": "vra.use.server",
+      "intentName": "vra.use.server",
+      "actionParameters": [
+        {
+          "parameterName": "server",
+          "entityName": "vra.server",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "model_features": [],
+  "regex_features": [],
+  "utterances": [
+    {
+      "text": "login to localhost",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "login to https://localhost/vcac",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 6,
+          "endPos": 6
+        }
+      ]
+    },
+    {
+      "text": "show me the catalog",
+      "intent": "vra.list.catalog",
+      "entities": []
+    },
+    {
+      "text": "i want one server",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "deploy me one container",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "give me two jenkins",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "provision 2 containers",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "connect to localhost",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "connect to vra",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "login to vra",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "i want you to use server",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 5,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "you should manage myhost",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "manage myhost",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "use server",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "list the catalog",
+      "intent": "vra.list.catalog",
+      "entities": []
+    },
+    {
+      "text": "list catalog items",
+      "intent": "vra.list.catalog",
+      "entities": []
+    },
+    {
+      "text": "show catalog items",
+      "intent": "vra.list.catalog",
+      "entities": []
+    },
+    {
+      "text": "preview the catalog",
+      "intent": "vra.list.catalog",
+      "entities": []
+    },
+    {
+      "text": "what do i have in the catalog",
+      "intent": "vra.list.catalog",
+      "entities": []
+    },
+    {
+      "text": "what is in the catalog",
+      "intent": "vra.list.catalog",
+      "entities": []
+    },
+    {
+      "text": "what i can choose from",
+      "intent": "vra.list.catalog",
+      "entities": []
+    },
+    {
+      "text": "list me the choices",
+      "intent": "vra.list.catalog",
+      "entities": []
+    },
+    {
+      "text": "show me the choices that i have",
+      "intent": "vra.list.catalog",
+      "entities": []
+    },
+    {
+      "text": "what i can choose from?",
+      "intent": "vra.list.catalog",
+      "entities": []
+    },
+    {
+      "text": "i want to request one server from localhost",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 7,
+          "endPos": 7
+        },
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 5,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "connect to sof-23654-vm25.eng.vmware.com",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 2,
+          "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "edited previous message: connect to &quot;sof-23654-vm25.eng.vmware.com&quot;<e_m ts=\"1464712344\" ts_ms=\"1464712345000\" a=\"ventsyslav.raikov\" t=\"61\"/>",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "connect to sof.23654.vm25",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 2,
+          "endPos": 6
+        }
+      ]
+    },
+    {
+      "text": "connect to sof-23654-vm25",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 2,
+          "endPos": 6
+        }
+      ]
+    },
+    {
+      "text": "connect to cafe:8443",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 2,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "login to cafe:8443",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 2,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "use cafe:8443",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 1,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "list catalog",
+      "intent": "vra.list.catalog",
+      "entities": []
+    },
+    {
+      "text": "hello",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "deploy me one busybox",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "request busybox",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "give me a busybox",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "deploy a busybox",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "i would like two busybox containers",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 4,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "i'll order one busybox container, please",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 5,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "one busybox container for me",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "i want a vat",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "one container for me",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "deploy me two busybox",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "kak e pich?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "connect to \"sof-23654-vm25.eng.vmware.com\"",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 2,
+          "endPos": 13
+        }
+      ]
+    },
+    {
+      "text": "connect to google.com",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 2,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "use server shit",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "show the catalog",
+      "intent": "vra.list.catalog",
+      "entities": []
+    },
+    {
+      "text": "my server is localhost:55445",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 3,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "deploy me hello-world",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 2,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "i want one hello_world_container please",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 3,
+          "endPos": 7
+        }
+      ]
+    },
+    {
+      "text": "give me one test.contaner.with.punctuation.symbols right now",
+      "intent": "vra.request.catalog.item",
+      "entities": [
+        {
+          "entity": "vra.catalog.item",
+          "startPos": 3,
+          "endPos": 11
+        }
+      ]
+    },
+    {
+      "text": "use localhost as a vra host",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "use 10.0.0.1 as a server",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 1,
+          "endPos": 7
+        }
+      ]
+    },
+    {
+      "text": "i will manage 10.0.0.1",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 3,
+          "endPos": 9
+        }
+      ]
+    },
+    {
+      "text": "let the server be localhost",
+      "intent": "vra.use.server",
+      "entities": [
+        {
+          "entity": "vra.server",
+          "startPos": 4,
+          "endPos": 4
+        }
+      ]
+    }
+  ]
+}
