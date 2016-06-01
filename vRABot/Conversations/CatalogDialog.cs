@@ -117,7 +117,10 @@ namespace vRABot.Conversations
                     EntityRecommendation itemsToRequest;
                     if (result.TryFindEntity(NUMBER, out itemsToRequest))
                     {
-                        //TODO: parse number
+                        if(!int.TryParse(itemsToRequest.Entity, out requests))
+                        {
+                            requests = 1;
+                        }
                     }
 
                     for (int i = 0; i < requests; i++)
