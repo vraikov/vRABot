@@ -135,9 +135,11 @@ namespace vRABot.Conversations
 
         private async Task<string> ReportProgress(IDialogContext context, string requestId)
         {
-            while (true)
+            string status = null;
+            int attempts = 100;
+            while (attempts-- > 0)
             {
-                string status = await this.currentServer.CheckRequestStatus(requestId);
+                status = await this.currentServer.CheckRequestStatus(requestId);
 
                 if (status == "SUCCESSFUL")
                 {
@@ -152,6 +154,8 @@ namespace vRABot.Conversations
 
                 await Task.Delay(TimeSpan.FromSeconds(10));
             }
+
+            return status;
         }
     }
 }
