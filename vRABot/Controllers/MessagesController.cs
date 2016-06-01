@@ -25,7 +25,16 @@ namespace vRABot
             {
                 if (message.Type == "Message")
                 {
-                    return await Conversation.SendAsync(message, () => new CatalogDialog());
+                    if (message.Text.ToLowerInvariant() == "reset")
+                    {
+                        var msg = message.CreateReplyMessage("reset");
+                        msg.SetBotPerUserInConversationData("DialogState", null);
+                        return msg;
+                    }
+                    else
+                    {
+                        return await Conversation.SendAsync(message, () => new CatalogDialog());
+                    }
                 }
                 else
                 {

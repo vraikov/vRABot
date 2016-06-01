@@ -55,8 +55,8 @@ namespace vRABot.Conversations
             if (this.currentServer != null)
             {
                 var catItemsNames = await this.currentServer.GetCatalogItemNames();
-                var itemsFormatted = string.Join(" ", catItemsNames.Select((item, i) => $"{i + 1}. {item}"));
-                await context.PostAsync($"# H3 Choose an item: {itemsFormatted}");
+                var itemsFormatted = string.Join(" ", catItemsNames.Select((item, i) => $"{{*}} {item}"));
+                await context.PostAsync($"Choose an item: {itemsFormatted}");
             }
             else
             {
@@ -69,9 +69,10 @@ namespace vRABot.Conversations
         private async Task ServerFormComplete(IDialogContext context, IAwaitable<ServerInfoForm> result)
         {
             this.currentServer = null;
+            ServerInfoForm serverInfo = null;
             try
             {
-                var serverInfo = await result;
+                serverInfo = await result;
                 this.currentServer = new vRAServer(serverInfo.hostname, serverInfo.username, serverInfo.password, serverInfo.tenant);
             }
             catch (OperationCanceledException)
@@ -82,7 +83,7 @@ namespace vRABot.Conversations
 
             if (this.currentServer != null)
             {
-                await context.PostAsync("Server is configured, awaiting comands");
+                await context.PostAsync($"Server {serverInfo.hostname} is configured({serverInfo.username}/{serverInfo.password}/{serverInfo.tenant}), awaiting comands");
             }
             else
             {
@@ -98,6 +99,7 @@ namespace vRABot.Conversations
             if (this.currentServer == null)
             {
                 await context.PostAsync("No server configured.");
+                context.Wait(MessageReceived);
             }
             else
             {
@@ -131,6 +133,8 @@ namespace vRABot.Conversations
             {
                 await ReportProgress(context, this.requestId);
             }
+
+            context.Wait(MessageReceived);
         }
 
         private async Task<string> ReportProgress(IDialogContext context, string requestId)
