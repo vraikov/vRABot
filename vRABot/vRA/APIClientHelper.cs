@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -87,7 +89,7 @@ namespace vRABot.vRA
             return null;
         }
 
-        public async static Task<bool> RequestCatalogItem(string server, string bearerToken, string catalogItem)
+        public async static Task<string> RequestCatalogItem(string server, string bearerToken, string catalogItem)
         {
             using (var client = APIClientHelper.GetInsecureHttpClientWithToken(bearerToken))
             {
@@ -114,7 +116,7 @@ namespace vRABot.vRA
                                 if (msgTemplate.IsSuccessStatusCode)
                                 {
                                     var requestTemplate = await msgTemplate.Content.ReadAsStringAsync();
-                                    HttpResponseMessage msgItemRequest = await client.PostAsync(
+                                    HttpResponseMessage msgItemRequest = await jsonClient.PostAsync(
                                         $"https://{server}/catalog-service/api/consumer/entitledCatalogItems/{itemId.Value}/requests",
                                         new StringContent(
                                             requestTemplate,
@@ -124,7 +126,8 @@ namespace vRABot.vRA
                                     if (msgItemRequest.IsSuccessStatusCode)
                                     {
                                         var itemRequest = await msgItemRequest.Content.ReadAsStringAsync();
-                                        return true;
+                                        var item = JObject.Parse(itemRequest);
+                                        return item.Value<string>("id");
                                     }
                                 }
                             }
@@ -134,11 +137,11 @@ namespace vRABot.vRA
                 }
                 catch
                 {
-                    return false;
+                    return string.Empty;
                 }
             }
 
-            return false;
+            return string.Empty;
         }
     }
 }
