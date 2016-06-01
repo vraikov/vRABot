@@ -34,11 +34,16 @@ namespace vRABot.vRA
             return await GetServerResult<string>(() => APIClientHelper.RequestCatalogItem(this.server, this.token, item));
         }
 
+        public async Task<String> CheckRequestStatus(string requestId)
+        {
+            return await GetServerResult<string>(() => APIClientHelper.GetRequestState(this.server, this.token, requestId));
+        }
+
         private async Task<T> GetServerResult<T>(Func<Task<T>> action)
         {
             try
             {
-                if(string.IsNullOrWhiteSpace(this.token))
+                if (string.IsNullOrWhiteSpace(this.token))
                 {
                     this.token = await APIClientHelper.GetBearerToken(this.server, this.username, this.password, this.tenant);
                 }

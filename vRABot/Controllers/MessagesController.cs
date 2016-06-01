@@ -21,13 +21,20 @@ namespace vRABot
         /// </summary>
         public async Task<Message> Post([FromBody]Message message)
         {
-            if (message.Type == "Message")
+            try
             {
-                return await Conversation.SendAsync(message, () => new CatalogDialog());
+                if (message.Type == "Message")
+                {
+                    return await Conversation.SendAsync(message, () => new CatalogDialog());
+                }
+                else
+                {
+                    return HandleSystemMessage(message);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return HandleSystemMessage(message);
+                return message.CreateReplyMessage($"An error occured - {ex.Message}");
             }
         }
 
