@@ -113,8 +113,8 @@ namespace vRABot.Conversations
                 EntityRecommendation item;
                 if (result.TryFindEntity(CATALOG_ITEM_ENTITY, out item))
                 {
-                    /*
                     int requests = 1;
+                    /*
                     EntityRecommendation itemsToRequest;
                     if (result.TryFindEntity(NUMBER, out itemsToRequest))
                     {
