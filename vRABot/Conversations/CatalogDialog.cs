@@ -29,7 +29,7 @@ namespace vRABot.Conversations
         [LuisIntent("")]
         public async Task Default(IDialogContext context, LuisResult result)
         {
-            await context.PostAsync("What?");
+            await context.PostAsync("Oops, I didn't get your request! :$");
             context.Wait(MessageReceived);
         }
 
@@ -55,8 +55,15 @@ namespace vRABot.Conversations
             if (this.currentServer != null)
             {
                 var catItemsNames = await this.currentServer.GetCatalogItemNames();
-                var itemsFormatted = string.Join(" ", catItemsNames.Select((item, i) => $"{{*}} {item}"));
-                await context.PostAsync($"Choose an item: {itemsFormatted}");
+                if (!catItemsNames.Any<string>())
+                {
+                    await context.PostAsync($"It seems that you don't have any catalog items! :(");
+                }
+                else
+                {
+                    var itemsFormatted = string.Join(" ", catItemsNames.Select(item => $"*{item}*\n\n"));
+                    await context.PostAsync($"Here you are (bow):\n\n{itemsFormatted}");
+                }
             }
             else
             {
@@ -83,7 +90,7 @@ namespace vRABot.Conversations
 
             if (this.currentServer != null)
             {
-                await context.PostAsync($"Server {serverInfo.hostname} is configured({serverInfo.username}/{serverInfo.password}/{serverInfo.tenant}), awaiting comands");
+                await context.PostAsync($"Server {serverInfo.hostname} is fine and I'm awaiting commands. You may want to list the catalog and order something.");
             }
             else
             {
@@ -98,7 +105,7 @@ namespace vRABot.Conversations
         {
             if (this.currentServer == null)
             {
-                await context.PostAsync("No server configured.");
+                await context.PostAsync("You need to specify the vRA host prior requesting catalog items! Which host would you like to use?");
                 context.Wait(MessageReceived);
             }
             else
@@ -116,12 +123,12 @@ namespace vRABot.Conversations
                     for (int i = 0; i < requests; i++)
                     {
                         this.requestId = await this.currentServer.RequestCatalogItem(item.Entity);
-                        PromptDialog.Confirm(context, PollingConfirmed, $"Requested item with id = {requestId}. Do you want a status report?", promptStyle: PromptStyle.None);
+                        PromptDialog.Confirm(context, PollingConfirmed, $"Request {requestId} is created. Do you want a status report?", promptStyle: PromptStyle.None);
                     }
                 }
                 else
                 {
-                    await context.PostAsync("Please specify item to request.");
+                    await context.PostAsync("I didn't get what is your request from the catalog.");
                     context.Wait(MessageReceived);
                 }
             }
@@ -137,7 +144,7 @@ namespace vRABot.Conversations
             context.Wait(MessageReceived);
         }
 
-        private async Task<string> ReportProgress(IDialogContext context, string requestId)
+        private async Task ReportProgress(IDialogContext context, string requestId)
         {
             string status = null;
             int attempts = 100;
@@ -147,19 +154,22 @@ namespace vRABot.Conversations
 
                 if (status == "SUCCESSFUL")
                 {
-                    await context.PostAsync($"Request with id \'{requestId}\' finished successfully.");
-                    return status;
+                    await context.PostAsync($"Request \'{requestId}\' finished successfully.");
+                    break;
                 }
                 else if (status == "FAILED")
                 {
-                    await context.PostAsync($"Request with id \'{requestId}\' failed.");
-                    return status;
+                    await context.PostAsync($"Request \'{requestId}\' failed.");
+                    break;
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(10));
             }
 
-            return status;
+            if (status != "SUCCESSFUL" && status != "FAILED")
+            {
+                await context.PostAsync($"Request \'{requestId}\' finished with status {status}.");
+            }
         }
     }
 }

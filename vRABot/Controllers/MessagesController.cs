@@ -27,7 +27,7 @@ namespace vRABot
                 {
                     if (message.Text.ToLowerInvariant() == "reset")
                     {
-                        var msg = message.CreateReplyMessage("reset");
+                        var msg = message.CreateReplyMessage("Done! All cleared! (emo)");
                         msg.SetBotPerUserInConversationData("DialogState", null);
                         return msg;
                     }
@@ -43,7 +43,7 @@ namespace vRABot
             }
             catch (Exception ex)
             {
-                return message.CreateReplyMessage($"An error occured - {ex.Message}");
+                return message.CreateReplyMessage($"An error occured! (swear)");
             }
         }
 
@@ -59,24 +59,33 @@ namespace vRABot
             {
                 // Implement user deletion here
                 // If we handle user deletion, return a real message
+                var msg = message.CreateReplyMessage();
+                msg.SetBotPerUserInConversationData("DialogState", null);
+                return msg;
             }
             else if (message.Type == "BotAddedToConversation")
             {
             }
             else if (message.Type == "BotRemovedFromConversation")
             {
+                var msg = message.CreateReplyMessage();
+                msg.SetBotPerUserInConversationData("DialogState", null);
+                return msg;
             }
             else if (message.Type == "UserAddedToConversation")
             {
             }
             else if (message.Type == "UserRemovedFromConversation")
             {
+                var msg = message.CreateReplyMessage();
+                msg.SetBotPerUserInConversationData("DialogState", null);
+                return msg;
             }
             else if (message.Type == "EndOfConversation")
             {
             }
 
-            return null;
+            return message.CreateReplyMessage(message.Type);
         }
     }
 }

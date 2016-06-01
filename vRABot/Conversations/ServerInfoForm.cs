@@ -26,8 +26,8 @@ namespace vRABot.Conversations
         public static IForm<ServerInfoForm> BuildForm()
         {
             return new FormBuilder<ServerInfoForm>()
-                    .Message("Enter login information")
-                    .Build();
+                .Message("Enter login information")
+                .Build();
         }
     }
 }
