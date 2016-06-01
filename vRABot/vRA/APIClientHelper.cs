@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -32,6 +33,26 @@ namespace vRABot.vRA
             return client;
         }
 
+        private static async Task<T> HandleResultStatusCode<T>(HttpResponseMessage messageResponse, Func<string, Task<T>> handleFunc)
+        {
+            if (messageResponse.IsSuccessStatusCode)
+            {
+                var response = await messageResponse.Content.ReadAsStringAsync();
+                return await handleFunc(response);
+            }
+            else
+            {
+                if (messageResponse.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    throw new Exception("Unathorized!");
+                }
+                else
+                {
+                    throw new Exception($"Your request is {messageResponse.StatusCode.ToString()}");
+                }
+            }
+        }
+
         public async static Task<string> GetBearerToken(string server, string username, string password, string tenant)
         {
             using (var client = APIClientHelper.GetInsecureHttpClient())
@@ -39,28 +60,25 @@ namespace vRABot.vRA
                 try
                 {
                     string uri = $"https://{server}/identity/api/tokens";
-                    HttpResponseMessage msg = await client.PostAsync(
+                    HttpResponseMessage messageResponse = await client.PostAsync(
                         uri,
                         new StringContent(
                             $"{{\"username\":\"{username}\",\"password\":\"{password}\",\"tenant\":\"{tenant}\"}}",
                             Encoding.UTF8,
                             "application/json"));
 
-                    if (msg.IsSuccessStatusCode)
+                    return await HandleResultStatusCode<string>(messageResponse, (response) =>
                     {
-                        var response = await msg.Content.ReadAsStringAsync();
                         var xml = XDocument.Parse(response);
                         var id = (from el in xml.Root.Descendants("id") select el).First();
-                        return id.Value;
-                    }
+                        return Task.FromResult<string>(id.Value);
+                    });
                 }
-                catch
+                catch (Exception exc)
                 {
-                    return null;
+                    throw new Exception("Something went terribly wrong!", exc);
                 }
             }
-
-            return null;
         }
 
         public async static Task<IEnumerable<string>> GetCatalogItems(string server, string bearerToken)
@@ -69,24 +87,21 @@ namespace vRABot.vRA
             {
                 try
                 {
-                    string uri = $"https://{server}/catalog-service/api/consumer/entitledCatalogItemViews";
-                    HttpResponseMessage msg = await client.GetAsync(uri);
+                    HttpResponseMessage messageResponse = await client.GetAsync(
+                        $"https://{server}/catalog-service/api/consumer/entitledCatalogItemViews");
 
-                    if (msg.IsSuccessStatusCode)
+                    return await HandleResultStatusCode<IEnumerable<string>>(messageResponse, (response) =>
                     {
-                        var response = await msg.Content.ReadAsStringAsync();
                         var xml = XDocument.Parse(response);
                         var catalogItemNames = from el in xml.Root.Descendants("name") select el.Value;
-                        return catalogItemNames;
-                    }
+                        return Task.FromResult<IEnumerable<string>>(catalogItemNames);
+                    });
                 }
-                catch
+                catch (Exception exc)
                 {
-                    return null;
+                    throw new Exception("Something went terribly wrong!", exc);
                 }
             }
-
-            return null;
         }
 
         public async static Task<string> RequestCatalogItem(string server, string bearerToken, string catalogItem)
@@ -95,12 +110,11 @@ namespace vRABot.vRA
             {
                 try
                 {
-                    HttpResponseMessage msg = await client.GetAsync(
+                    HttpResponseMessage messageResponse = await client.GetAsync(
                         $"https://{server}/catalog-service/api/consumer/entitledCatalogItemViews");
 
-                    if (msg.IsSuccessStatusCode)
+                    return await HandleResultStatusCode<string>(messageResponse, async (response) =>
                     {
-                        var response = await msg.Content.ReadAsStringAsync();
                         var xml = XDocument.Parse(response);
                         var itemId = (from el in xml.Root.Descendants("consumerEntitledCatalogItemView")
                                       where el.Element("name").Value.Equals(catalogItem, StringComparison.InvariantCultureIgnoreCase)
@@ -113,35 +127,32 @@ namespace vRABot.vRA
                                 HttpResponseMessage msgTemplate = await jsonClient.GetAsync(
                                     $"https://{server}/catalog-service/api/consumer/entitledCatalogItems/{itemId.Value}/requests/template");
 
-                                if (msgTemplate.IsSuccessStatusCode)
+                                return await HandleResultStatusCode<string>(msgTemplate, async (templateResponse) =>
                                 {
-                                    var requestTemplate = await msgTemplate.Content.ReadAsStringAsync();
                                     HttpResponseMessage msgItemRequest = await jsonClient.PostAsync(
                                         $"https://{server}/catalog-service/api/consumer/entitledCatalogItems/{itemId.Value}/requests",
                                         new StringContent(
-                                            requestTemplate,
+                                            templateResponse,
                                             Encoding.UTF8,
                                             "application/json"));
 
-                                    if (msgItemRequest.IsSuccessStatusCode)
+                                    return await HandleResultStatusCode<string>(msgItemRequest, (itemResponse) =>
                                     {
-                                        var itemRequest = await msgItemRequest.Content.ReadAsStringAsync();
-                                        var item = JObject.Parse(itemRequest);
-                                        return item.Value<string>("id");
-                                    }
-                                }
+                                        var item = JObject.Parse(itemResponse);
+                                        return Task.FromResult<string>(item.Value<string>("id"));
+                                    });
+                                });
                             }
-
                         }
-                    }
+
+                        throw new Exception($"The catalog item {catalogItem} is no longer available for request!");
+                    });
                 }
-                catch
+                catch (Exception exc)
                 {
-                    return string.Empty;
+                    throw new Exception("Something went terribly wrong!", exc);
                 }
             }
-
-            return string.Empty;
         }
     }
 }
