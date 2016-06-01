@@ -61,8 +61,8 @@ namespace vRABot.Conversations
                 }
                 else
                 {
-                    var itemsFormatted = string.Join(" ", catItemsNames.Select(item => $"*{item}*\n\n"));
-                    await context.PostAsync($"Here you are (bow):\n\n{itemsFormatted}");
+                    var itemsFormatted = string.Join("\n\n", catItemsNames.Select(item => $"*{item}*"));
+                    await context.PostAsync($"Here you are:\n\n{itemsFormatted}");
                 }
             }
             else
