@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vRABot.Conversations;
 using System.Threading.Tasks;
+using vRABot.vRA;
 
 namespace vRABot.Tests
 {

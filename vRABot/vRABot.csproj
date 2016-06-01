@@ -111,7 +111,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Conversations\CatalogDialog.cs" />
-    <Compile Include="Conversations\APIClientHelper.cs" />
+    <Compile Include="vRA\APIClientHelper.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

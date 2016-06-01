@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml.Linq;
 
-namespace vRABot.Conversations
+namespace vRABot.vRA
 {
     public static class APIClientHelper
     {
