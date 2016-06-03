@@ -29,7 +29,7 @@ namespace vRABot.Conversations
         [LuisIntent("")]
         public async Task Default(IDialogContext context, LuisResult result)
         {
-            await context.PostAsync("Oops, I didn't get your request! :$");
+            await context.PostAsync("Oops, I didn't get your request, alabala! :$");
             context.Wait(MessageReceived);
         }
 
